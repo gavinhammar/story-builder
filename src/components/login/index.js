@@ -1,8 +1,13 @@
 import React, { Component } from 'react';
+
 import store from '../../redux/store';
-import '../../App.css';
 import { connect } from "react-redux";
 import { loginUser } from '../../redux/actions';
+
+import axios from 'axios';
+
+import '../../App.css';
+
 import { withStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Button from '@material-ui/core/Button';
@@ -19,22 +24,40 @@ const mapDispatchToProps = dispatch => {
   
 const mapStateToProps = state => {
     return { 
-        name: state.name 
+        username: state.username 
     };
   };
 
 class ConnectedLogin extends Component {
     constructor(props) {
         super(props);
-        this.state = {name: props.name, password: ""};
-        store.subscribe(() => this.setState({name: store.getState().name}))
+        this.state = 
+        {   
+            username: "", 
+            password: "",
+            profile: {}
+        };
+        store.subscribe(() => this.setState({username: store.getState().name}))
     }
 
     handleClick(event) {
-        console.log(this.state);
-        this.props.loginUser({
-            username: this.state.username, 
-            password: this.state.password
+       
+
+        axios.get("https://api.sendible.com/api/v2/profile.json?username=" + this.state.username + "&api_key=" + this.state.password) 
+        .then(res => {
+            const profile = res.data;
+            this.setState({ profile });
+            this.props.loginUser({
+                username: this.state.username, 
+                password: this.state.password,
+                profile: this.state.profile
+            });
+
+          console.log(this.state);
+            
+        })
+        .catch((error) => {
+            alert("Error logging in");
         });
     }
 
@@ -51,6 +74,7 @@ class ConnectedLogin extends Component {
                             <TextField
                             hintText="Enter your Username"
                             floatingLabelText="Username"
+                            value={this.state.username}
                             onChange = {(event) => this.setState({username:event.target.value})}
                             />
                         <br/>
