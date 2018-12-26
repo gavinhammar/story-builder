@@ -9,6 +9,8 @@ import SendibleAPI from '../../api/sendible';
 
 import '../../App.css';
 
+
+
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -37,6 +39,7 @@ const styles = theme => ({
       display: 'flex',
       flexDirection: 'column',
       alignItems: 'center',
+      justifyContent: 'center',
       padding: `${theme.spacing.unit * 2}px ${theme.spacing.unit * 3}px ${theme.spacing.unit * 3}px`,
     },
     avatar: {
@@ -68,22 +71,32 @@ const mapStateToProps = state => {
 const initialState = {
     username: "", 
     password: "",
-    profile: {}
+    profile: {},
+    hasSubmitted: false
 };
+
+
 
 class ConnectedLogin extends Component {
     constructor(props) {
         super(props);
         this.state = initialState;
-        store.subscribe(() => this.setState({username: store.getState().name}))
+        store.subscribe(() => this.setState({username: store.getState().username}))
     }
 
-    handleClick(event) {
-        SendibleAPI.getProfile(this.state,
+    handleSubmit(event) {
+       event.preventDefault();
+       this.setState({
+            hasSubmitted: true
+       });
+       SendibleAPI.getProfile(this.state,
                 (res) => {
+
+                    this.setState({ hasSubmitted: false });
+
                     if (res.data.error){
                         alert("Incorrect username or password");
-                    //    this.setState(initialState);
+                        this.setState(initialState);
                     }
                     else {
                         const profile = res.data;
@@ -95,12 +108,14 @@ class ConnectedLogin extends Component {
                         });
                         console.log(this.state);   
                     }
+
                    
                 },
                 (err) => {
                     alert("Error logging in");
                 }
         );
+      
     }
 
      render() {
@@ -117,18 +132,20 @@ class ConnectedLogin extends Component {
                 <Typography component="h1" variant="h5">
                  Sign in
                 </Typography>
-                     <div className={classes.form}>
+                     <form className={classes.form} onSubmit={this.handleSubmit.bind(this)}>
                         <FormControl margin="normal" required fullWidth>
                         <InputLabel htmlFor="email">Email Address</InputLabel> 
                             <Input 
-                                id="email" name="email" autoComplete="email" autoFocus
+                                id="email" name="email" autoComplete="email" autoFocus value={this.state.username}
+                               
                                 onChange = {(event) => this.setState({username:event.target.value})}
                             />
                         </FormControl>
                         <FormControl margin="normal" required fullWidth>
                         <InputLabel htmlFor="password">Password</InputLabel>
                             <Input
-                                name="password" type="password" id="password" autoComplete="current-password"
+                                name="password" type="password" id="password" 
+                                 autoComplete="current-password"
                                 onChange = {(event) => this.setState({password:event.target.value})}
                             />
                          </FormControl>
@@ -137,9 +154,10 @@ class ConnectedLogin extends Component {
                                 variant="contained"
                                 color="primary" 
                                 className={classes.submit}
-                                onClick={(event) => this.handleClick(event)}>Login</Button>
+                                disabled={this.state.hasSubmitted}
+                                >Login</Button>
                          Logged in as {this.state.username}
-                    </div>
+                    </form>
                 </Paper>
             </main>
         );

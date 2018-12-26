@@ -15,6 +15,11 @@ const initialState = {
             state.password = action.payload.profile.api_key;
             state.profile = action.payload.profile;
             return state;
+        case "LOGOUT_USER":
+            state.username = null;
+            state.password = null;
+            state.profile = null;
+            return state;
       default:
         return state;
     }
