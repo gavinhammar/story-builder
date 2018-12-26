@@ -6,6 +6,8 @@ import { logoutUser } from '../../redux/actions';
 
 import { Route, Link, Redirect, BrowserRouter } from 'react-router-dom';
 
+import Login from '../../components/logout'
+
 import AppBar from '@material-ui/core/AppBar'
 import Toolbar from '@material-ui/core/Toolbar'
 import Typography from '@material-ui/core/Typography'
@@ -13,7 +15,7 @@ import Typography from '@material-ui/core/Typography'
 
 const mapDispatchToProps = dispatch => {
     return {
-        logoutUser: credentials => dispatch(logoutUser())
+        //logoutUser: credentials => dispatch(logoutUser())
     };
   };
 
@@ -27,15 +29,13 @@ class ConnectedHome extends Component {
     }
 
     logOut() {
-        this.props.logoutUser({});
         this.setState({loggedOut: true});
-       
-    }
+     }
 
     render() {
         return (
             this.state.loggedOut?
-             <Redirect to="/login" />
+             <Redirect to="/logout" />
             :
             <div>
                 Welcome {store.getState().username}
