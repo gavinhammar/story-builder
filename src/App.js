@@ -7,7 +7,7 @@ import SendibleAPI from './api/sendible';
 import NavBar from './components/common/navbar'
 import Login from './components/login'
 import Logout from './components/logout'
-import Home from './components/dashboard/home'
+import Home from './views/paperbase'
 import { Route, Link, Redirect, BrowserRouter } from 'react-router-dom';
 import './App.css';
 
@@ -54,7 +54,7 @@ render() {
     if (this.state.isAuthenticated){
       return (
         <div className="App">
-          <Home>{this.props.username}</Home>
+          <Home></Home>
           <Route path="/logout" component={Logout}/>
           <Route path="/login" component={Login}/>
         </div>
@@ -65,8 +65,10 @@ render() {
     }
     else if (!this.state.isAuthenticated && !this.state.isAuthenticating) return (
       <div className="App">
+         <Home></Home>
          <Redirect to='/login' />
          <Route path="/login" component={Login}/>
+         <Route path="/logout" component={Logout}/>
          
       </div>
     );

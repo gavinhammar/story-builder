@@ -29,7 +29,9 @@ class ConnectedLogout extends Component {
     render() {
       
         return (
-           <Redirect to="/login" />
+           <Redirect to={{
+            pathname: '/login'
+        }} />
         )
     }
 }

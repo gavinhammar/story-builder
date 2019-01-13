@@ -9,7 +9,7 @@ import SendibleAPI from '../../api/sendible';
 
 import '../../App.css';
 
-
+import { Redirect } from 'react-router-dom';
 
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
@@ -72,7 +72,8 @@ const initialState = {
     username: "", 
     password: "",
     profile: {},
-    hasSubmitted: false
+    hasSubmitted: false,
+    isLoggedIn: false
 };
 
 
@@ -82,6 +83,14 @@ class ConnectedLogin extends Component {
         super(props);
         this.state = initialState;
         store.subscribe(() => this.setState({username: store.getState().username}))
+    }
+
+    componentDidMount() { 
+       
+        if (!store.getState().profile) {
+            this.setState({isLoggedIn: false});
+        }
+        alert(this.state.isLoggedIn);
     }
 
     handleSubmit(event) {
@@ -100,7 +109,7 @@ class ConnectedLogin extends Component {
                     }
                     else {
                         const profile = res.data;
-                        this.setState({ profile });
+                        this.setState({ profile, isLoggedIn: true });
                         this.props.loginUser({
                             username: this.state.username, 
                             password: this.state.password,
@@ -121,8 +130,11 @@ class ConnectedLogin extends Component {
      render() {
 
         const {classes} = this.props;
-
+      
         return (
+            this.state.isLoggedIn?
+                <Redirect to="/" />
+            :
             <main className={classes.main}>
                 <CssBaseline />
                 <Paper className={classes.paper}>
